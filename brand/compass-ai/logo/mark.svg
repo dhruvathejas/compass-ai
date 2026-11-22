@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180" role="img" aria-label="Compass AI">
+  <title>Compass AI</title>
+  <g fill="none" stroke="#1F2937" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="90" cy="90" r="76" stroke-width="3.5"/>
+    <circle cx="90" cy="90" r="64" stroke-width="1.8"/>
+    <path d="M90 8v10M90 162v10M8 90h10M162 90h10" stroke-width="2.5"/>
+    <g transform="rotate(30 90 90)">
+      <path d="M90 34L103 90H77z" fill="#C2562B" stroke="none"/>
+      <path d="M90 34L103 90L90 146L77 90Z" stroke-width="3.5"/>
+    </g>
+    <circle cx="90" cy="90" r="4" stroke-width="2.5" fill="none"/>
+  </g>
+</svg>

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compass AI — splash demo</title>
+<link rel="icon" href="../favicon/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="compass-splash.css">
+<style>
+  *{box-sizing:border-box;margin:0}
+  body{background:var(--ca-paper-2);color:var(--ca-ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;height:100vh;display:flex}
+  aside{width:240px;flex:none;background:#F1EDE5;border-right:1px solid #E3DDD0;padding:20px 16px;display:flex;flex-direction:column;gap:6px;font-size:13px}
+  #brand-slot{height:44px;width:133px;margin-bottom:14px}
+  #brand-slot img{height:100%;width:auto;display:block}
+  .new{background:var(--ca-ink);color:#fff;border:0;border-radius:10px;padding:10px 12px;font:600 13px system-ui;text-align:left;margin-bottom:8px}
+  .chat{padding:9px 12px;border-radius:8px;color:#5C564A}
+  main{flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:28px clamp(16px,5vw,64px);gap:16px;min-width:0}
+  .me{align-self:flex-end;max-width:420px;background:#ECE6DA;padding:10px 14px;border-radius:16px 16px 4px 16px}
+  .ai{align-self:flex-start;max-width:480px;background:#fff;border:1px solid #E3DDD0;padding:10px 14px;border-radius:16px 16px 16px 4px}
+  .inp{display:flex;justify-content:space-between;align-items:center;border:1px solid #D9D1C0;background:#fff;border-radius:14px;padding:12px 14px;color:#6A6355;font-size:14px}
+  .inp i{width:28px;height:28px;border-radius:50%;background:var(--ca-ink)}
+  .replay{position:fixed;right:16px;top:16px;background:#fff;border:1px solid #D9D1C0;border-radius:8px;padding:8px 12px;font:600 13px system-ui;cursor:pointer}
+  @media (max-width:640px){aside{display:none}}
+</style>
+</head>
+<body>
+  <aside>
+    <div id="brand-slot"><img src="../logo/lockup.svg" alt="Compass AI"></div>
+    <button class="new" type="button">+ New chat</button>
+    <div class="chat">Python script help</div><div class="chat">Calculus practice</div><div class="chat">Logic puzzle</div>
+  </aside>
+  <main>
+    <div class="me">Help me factor x² − 5x + 6</div>
+    <div class="ai">Of course. It factors as (x − 2)(x − 3), so x = 2 or x = 3.</div>
+    <div class="inp"><span>Ask Compass AI anything…</span><i></i></div>
+  </main>
+  <button class="replay" type="button" onclick="run()">Replay splash</button>
+
+  <script src="compass-splash.js"></script>
+  <script>
+    var q = new URLSearchParams(location.search);
+    function run() {
+      return CompassSplash.play({
+        assetBase: "../",
+        target: "#brand-slot",
+        random: !q.has("capture"),
+        paused: q.has("capture")
+      });
+    }
+    window.__start = run;                 // used by tools/render_assets.py
+    if (!q.has("capture") && !q.has("manual")) run();
+  </script>
+</body>
+</html>

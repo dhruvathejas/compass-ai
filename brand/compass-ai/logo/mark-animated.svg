@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180" role="img" aria-label="Compass AI">
+  <title>Compass AI</title>
+  <style>
+    .dr{fill:none;stroke:#1F2937;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.2s ease-in-out forwards}
+    .d2{animation-delay:.25s} .d3{animation-delay:.5s}
+    @keyframes draw{to{stroke-dashoffset:0}}
+    .fill{fill:#C2562B;opacity:0;animation:fade .4s 1.1s forwards}
+    @keyframes fade{to{opacity:1}}
+    .nd{transform-origin:90px 90px;transform:rotate(30deg);animation:settle 2.4s 1.4s ease-in-out forwards,sway 4.8s 3.8s ease-in-out infinite}
+    @keyframes settle{0%{transform:rotate(30deg)}25%{transform:rotate(44deg)}55%{transform:rotate(16deg)}80%{transform:rotate(36deg)}100%{transform:rotate(30deg)}}
+    @keyframes sway{0%,100%{transform:rotate(30deg)}50%{transform:rotate(37deg)}}
+    @media (prefers-reduced-motion:reduce){.dr,.fill,.nd{animation:none;stroke-dashoffset:0;opacity:1}}
+  </style>
+  <circle class="dr" cx="90" cy="90" r="76" pathLength="1" stroke-width="3.5"/>
+  <circle class="dr d2" cx="90" cy="90" r="64" pathLength="1" stroke-width="1.8"/>
+  <path class="dr d2" d="M90 8v10M90 162v10M8 90h10M162 90h10" pathLength="1" stroke-width="2.5"/>
+  <g class="nd">
+    <path class="fill" d="M90 34L103 90H77z"/>
+    <path class="dr d3" d="M90 34L103 90L90 146L77 90Z" pathLength="1" stroke-width="3.5"/>
+  </g>
+  <circle class="dr d3" cx="90" cy="90" r="4" pathLength="1" stroke-width="2.5"/>
+</svg>
