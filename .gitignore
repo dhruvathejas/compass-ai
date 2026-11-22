@@ -14,3 +14,8 @@ out-shakespeare-char/
 *.bin
 *.pt
 data/shakespeare_char/input.txt
+
+out-shakespeare-char/
+*.bin
+*.pt
+data/shakespeare_char/input.txt
