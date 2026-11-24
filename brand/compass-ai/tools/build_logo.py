@@ -128,6 +128,10 @@ def main():
     write("mark-small-reversed.svg", svg("0 0 180 180", small_body(PAPER, CLAY_ON_DARK, INK)))
     write("favicon.svg", svg(
         "0 0 180 180", small_body(INK, CLAY, PAPER), extra=""))
+    # the favicon folder is what head-snippet.html points at, so keep a copy there
+    fav = ROOT / "favicon"
+    fav.mkdir(exist_ok=True)
+    (fav / "favicon.svg").write_text((LOGO / "favicon.svg").read_text(encoding="utf-8"), encoding="utf-8")
     write("mark-animated.svg", animated())
     lk, _ = lockup(INK, CLAY, "none")
     write("lockup.svg", lk)

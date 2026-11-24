@@ -19,3 +19,5 @@ out-shakespeare-char/
 *.bin
 *.pt
 data/shakespeare_char/input.txt
+
+data/local_dataset/

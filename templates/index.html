@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compass AI</title>
+
+  <link rel="icon" href="{{ url_for('static', filename='brand/compass-ai/favicon/favicon.svg') }}" type="image/svg+xml">
+  <link rel="icon" href="{{ url_for('static', filename='brand/compass-ai/favicon/favicon.ico') }}" sizes="48x48">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='brand/compass-ai/favicon/apple-touch-icon.png') }}">
+  <link rel="manifest" href="{{ url_for('static', filename='brand/compass-ai/favicon/site.webmanifest') }}">
+  <meta name="theme-color" content="#F7F4EE">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='brand/compass-ai/tokens.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='brand/compass-ai/splash/compass-splash.css') }}">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --line: #E4DED2;
+      --muted: #6B7280;
+      --ring: rgba(194, 86, 43, .35);
+    }
+    body {
+      background: var(--ca-paper);
+      color: var(--ca-ink);
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      display: flex; flex-direction: column; height: 100vh; height: 100dvh;
+    }
+
+    header {
+      background: var(--ca-paper-2);
+      border-bottom: 1px solid var(--line);
+      padding: 12px 24px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    #brand-slot { height: 40px; width: 121px; flex: none; }   /* lockup is 545:180 */
+    #brand-slot img { height: 100%; width: 100%; display: block; }
+
+    button {
+      font: inherit; cursor: pointer; border-radius: 8px;
+      transition: background .15s, border-color .15s, color .15s;
+    }
+    button:focus-visible, input:focus-visible { outline: 2px solid var(--ca-clay); outline-offset: 2px; }
+    .ghost {
+      background: transparent; color: var(--ca-ink);
+      border: 1px solid var(--line); padding: 7px 14px; font-size: .85rem;
+    }
+    .ghost:hover { background: var(--ca-paper); border-color: var(--ca-ink); }
+
+    #chat-box {
+      flex: 1; overflow-y: auto; padding: 28px 24px;
+      display: flex; flex-direction: column; gap: 16px;
+      max-width: 800px; width: 100%; margin: 0 auto;
+    }
+    .empty { margin: auto; text-align: center; color: var(--muted); }
+    .empty img { width: 72px; height: 72px; display: block; margin: 0 auto 14px; }
+    .empty p { font: 600 1.8rem/1.1 "Compass Caveat", "Caveat", cursive; color: var(--ca-clay-text); }
+    .empty small { display: block; margin-top: 8px; font-size: .9rem; }
+
+    .row { display: flex; gap: 10px; align-items: flex-start; max-width: 85%; }
+    .row.user { align-self: flex-end; }
+    .row.ai { align-self: flex-start; }
+    .avatar { width: 28px; height: 28px; flex: none; margin-top: 6px; }
+    .msg { padding: 11px 16px; border-radius: 14px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .user .msg { background: var(--ca-ink); color: var(--ca-paper); border-bottom-right-radius: 3px; }
+    .ai .msg { background: var(--ca-paper-2); border: 1px solid var(--line); border-bottom-left-radius: 3px; }
+    .ai .msg.thinking { color: var(--muted); font-style: italic; }
+
+    form {
+      background: var(--ca-paper-2); border-top: 1px solid var(--line);
+      padding: 16px; display: flex; gap: 10px; justify-content: center;
+    }
+    input {
+      flex: 1; max-width: 700px; padding: 12px 16px; border-radius: 10px;
+      border: 1px solid var(--line); background: #fff; color: var(--ca-ink);
+      font: inherit; font-size: 1rem;
+    }
+    input::placeholder { color: #9CA3AF; }
+    input:focus { border-color: var(--ca-clay); outline: none; box-shadow: 0 0 0 3px var(--ring); }
+    .send { background: var(--ca-ink); color: var(--ca-paper); border: 1px solid var(--ca-ink); font-weight: 600; padding: 0 22px; }
+    .send:hover { background: #111827; }
+
+    @media (max-width: 520px) {
+      header { padding: 10px 16px; }
+      #chat-box { padding: 20px 16px; }
+      .row { max-width: 95%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div id="brand-slot">
+      <img src="{{ url_for('static', filename='brand/compass-ai/logo/lockup.svg') }}" alt="Compass AI">
+    </div>
+    <button class="ghost" onclick="clearChat()">New Chat</button>
+  </header>
+
+  <div id="chat-box"></div>
+
+  <form id="chat-form">
+    <input id="user-input" type="text" placeholder="Ask Compass AI anything..." autocomplete="off" required />
+    <button class="send" type="submit">Send</button>
+  </form>
+
+  <script src="{{ url_for('static', filename='brand/compass-ai/splash/compass-splash.js') }}"></script>
+  <script>
+    const BRAND = "{{ url_for('static', filename='brand/compass-ai/') }}";
+    CompassSplash.play({
+      assetBase: BRAND,
+      target: "#brand-slot",
+      once: "compass-splash-seen"   // once per browser tab
+    });
+
+    const chatBox = document.getElementById("chat-box");
+    const form = document.getElementById("chat-form");
+    const input = document.getElementById("user-input");
+
+    const systemPrompt = {
+      role: "system",
+      content: "Your name is Compass AI. You are a helpful AI assistant for coding, math, and everyday tasks. Always give fresh, direct answers and never repeat previous replies."
+    };
+
+    let messages = [systemPrompt];
+
+    function showEmpty() {
+      chatBox.innerHTML =
+        '<div class="empty"><img src="' + BRAND + 'logo/mark.svg" alt="">' +
+        '<p>Ready when you are</p><small>Ask about code, maths or anything logical.</small></div>';
+    }
+
+    function addBubble(text, sender) {
+      const empty = chatBox.querySelector(".empty");
+      if (empty) empty.remove();
+      const row = document.createElement("div");
+      row.className = `row ${sender}`;
+      if (sender === "ai") {
+        const av = document.createElement("img");
+        av.className = "avatar";
+        av.src = BRAND + "logo/mark-small.svg";
+        av.alt = "";
+        row.appendChild(av);
+      }
+      const div = document.createElement("div");
+      div.className = "msg";
+      div.textContent = text;
+      row.appendChild(div);
+      chatBox.appendChild(row);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      return div;
+    }
+
+    function clearChat() {
+      messages = [systemPrompt];
+      showEmpty();
+    }
+    showEmpty();
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+
+      input.value = "";
+      addBubble(text, "user");
+      messages.push({ role: "user", content: text });
+
+      const thinking = addBubble("Thinking...", "ai");
+      thinking.classList.add("thinking");
+
+      try {
+        const res = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages })
+        });
+
+        const data = await res.json();
+        thinking.classList.remove("thinking");
+        thinking.textContent = data.reply;
+        messages.push({ role: "assistant", content: data.reply });
+      } catch (err) {
+        thinking.classList.remove("thinking");
+        thinking.textContent = "Error: Could not reach Compass AI server.";
+      }
+    });
+  </script>
+</body>
+</html>
