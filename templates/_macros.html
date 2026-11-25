@@ -1,0 +1,5 @@
+{# Brand lockup: the ink version on light themes, the reversed one on dark (CSS picks which is shown). #}
+{% macro lockup() -%}
+  <img class="lk lk-light" src="{{ asset('brand/compass-ai/logo/lockup.svg') }}" alt="Compass AI">
+  <img class="lk lk-dark" src="{{ asset('brand/compass-ai/logo/lockup-reversed.svg') }}" alt="" aria-hidden="true">
+{%- endmacro %}

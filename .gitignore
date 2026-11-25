@@ -21,3 +21,9 @@ out-shakespeare-char/
 data/shakespeare_char/input.txt
 
 data/local_dataset/
+
+# Personal chat history (never commit)
+memory/
+
+# User projects created in Compass AI (milestone 3)
+workspace/

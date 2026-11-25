@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en"{% if theme != 'auto' %} data-theme="{{ theme }}"{% endif %}>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <title>{% block title %}Compass AI{% endblock %}</title>
+
+  <link rel="icon" href="{{ asset('brand/compass-ai/favicon/favicon.svg') }}" type="image/svg+xml">
+  <link rel="icon" href="{{ asset('brand/compass-ai/favicon/favicon.ico') }}" sizes="48x48">
+  <link rel="apple-touch-icon" href="{{ asset('brand/compass-ai/favicon/apple-touch-icon.png') }}">
+  <link rel="manifest" href="{{ asset('brand/compass-ai/favicon/site.webmanifest') }}">
+  <meta name="theme-color" content="#F7F4EE">
+
+  <link rel="stylesheet" href="{{ asset('brand/compass-ai/tokens.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body class="{% block bodyclass %}{% endblock %}">
+{% block body %}{% endblock %}
+</body>
+</html>

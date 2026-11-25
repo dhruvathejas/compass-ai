@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% from "_macros.html" import lockup with context %}
+{% block title %}Setup needed · Compass AI{% endblock %}
+{% block bodyclass %}centered{% endblock %}
+{% block body %}
+<main class="card">
+  <div class="card-brand">{{ lockup() }}</div>
+  <h1>Setup needed</h1>
+  <p class="lede">Compass AI has no password yet, so it is locked. On the computer that runs Compass AI, open a terminal in the project folder and run:</p>
+  <pre class="cmd">python app.py set-password</pre>
+  <p class="lede">Then reload this page.</p>
+</main>
+{% endblock %}

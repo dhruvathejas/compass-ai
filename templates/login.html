@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% from "_macros.html" import lockup with context %}
+{% block title %}Sign in · Compass AI{% endblock %}
+{% block bodyclass %}centered{% endblock %}
+{% block body %}
+<main class="card">
+  <div class="card-brand">{{ lockup() }}</div>
+  <h1>Sign in</h1>
+  <p class="lede">Your chats and projects are private. Enter your password to continue.</p>
+  <form method="post" action="{{ url_for('auth.login_post') }}" autocomplete="on">
+    <input type="hidden" name="csrf_token" value="{{ csrf }}">
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" autocomplete="current-password" required autofocus>
+    {% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
+    <button class="btn primary" type="submit">Sign in</button>
+  </form>
+</main>
+{% endblock %}

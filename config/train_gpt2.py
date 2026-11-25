@@ -2,6 +2,10 @@
 # launch as the following (e.g. in a screen session) and wait ~5 days:
 # $ torchrun --standalone --nproc_per_node=8 train.py config/train_gpt2.py
 
+# needs data/openwebtext/{train,val}.bin; the prepare script was removed from this fork
+# (restore it from git history if you want this run)
+dataset = 'openwebtext'
+
 wandb_log = True
 wandb_project = 'owt'
 wandb_run_name='gpt2-124M'
