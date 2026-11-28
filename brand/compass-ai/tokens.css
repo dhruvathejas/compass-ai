@@ -1,0 +1,18 @@
+/* Compass AI — brand tokens. Light UI first; reversed values for dark UIs. */
+:root {
+  --ca-ink: #1F2937;        /* mark, wordmark, primary buttons */
+  --ca-paper: #F7F4EE;      /* splash + icon background */
+  --ca-paper-2: #FBF9F5;    /* app surface */
+  --ca-clay: #C2562B;       /* needle, graphics (3:1 on paper) */
+  --ca-clay-text: #B4532A;  /* clay for text (4.5:1 on paper) */
+
+  --ca-font-display: "Instrument Serif", Georgia, serif; /* wordmark only; ships as outlines */
+  --ca-font-hand: "Compass Caveat", "Caveat", cursive;   /* greetings */
+}
+
+/* Reversed palette for dark surfaces */
+.ca-dark, [data-theme="dark"] {
+  --ca-ink: #F7F4EE;
+  --ca-clay: #E88A63;
+  --ca-clay-text: #E88A63;
+}

@@ -1,0 +1,3 @@
+# Extra requirements for running Compass AI as a shared server (python app.py --server)
+-r requirements.txt
+waitress>=3.0

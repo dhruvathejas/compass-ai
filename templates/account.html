@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% from "_macros.html" import lockup, field with context %}
+{% block title %}{{ title }} · Account · Compass AI{% endblock %}
+{% block bodyclass %}page account{% endblock %}
+{% block head %}
+  <meta name="csrf-token" content="{{ csrf }}">
+  <link rel="stylesheet" href="{{ asset('css/pages.css') }}">
+  <script type="module" src="{{ asset('js/account.js') }}"></script>
+{% endblock %}
+{% block body %}
+<div class="shell">
+  <header class="shell-head">
+    <div class="brand-slot">{{ lockup() }}</div>
+    <nav class="head-links" aria-label="Pages"><a href="{{ url_for('ui.home') }}">← Back to chats</a></nav>
+  </header>
+
+  <div class="acct">
+    <nav class="acct-nav" aria-label="Account sections">
+      {% for key, label in nav %}
+        <a href="{{ url_for('ui.account_section', section=key) }}"{% if key == section %} aria-current="page" class="on"{% endif %}>{{ label }}</a>
+      {% endfor %}
+    </nav>
+
+    <main class="acct-main" id="acct" data-section="{{ section }}">
+      <h1>{{ title }}</h1>
+
+      {% if section == 'profile' %}
+        <p class="lede">How you appear inside Compass AI.</p>
+        <form id="profile-form" class="panel" novalidate>
+          {{ field("display_name", "Display name", value=user.display_name, auto="name", extra='maxlength="60"') }}
+          <div class="field">
+            <label for="username">Username</label>
+            <input id="username" type="text" value="{{ user.username }}" readonly aria-describedby="username-hint">
+            <p class="field-hint" id="username-hint">Your sign-in name. It can't be changed.</p>
+          </div>
+          {{ field("email", "Email", type="email", value=user.email, auto="email", required=False, hint="Contact info stored on the host. Not verified, never emailed.") }}
+          <div class="actions"><button class="btn primary" type="submit">Save changes</button><span id="profile-status" class="status" role="status"></span></div>
+        </form>
+
+        <h2>Account information</h2>
+        <dl class="facts-grid panel" id="account-info" aria-live="polite">
+          <dt>Role</dt><dd>{{ 'Owner of this host' if user.role == 'owner' else 'Member' }}</dd>
+          <dt>Account ID</dt><dd><code>{{ user.id }}</code></dd>
+          <dt>Member since</dt><dd data-time="{{ user.created }}"></dd>
+          <dt>Connected to</dt><dd id="info-host">…</dd>
+          <dt>This device</dt><dd id="info-device">…</dd>
+        </dl>
+
+      {% elif section == 'security' %}
+        <p class="lede">Your password and the places you're signed in.</p>
+        <h2>Change password</h2>
+        <form id="password-form" class="panel" novalidate>
+          {{ field("current", "Current password", type="password", auto="current-password") }}
+          {{ field("new", "New password", type="password", auto="new-password", hint="At least 10 characters.") }}
+          {{ field("again", "Repeat new password", type="password", auto="new-password") }}
+          <div class="actions"><button class="btn primary" type="submit">Change password</button><span id="password-status" class="status" role="status"></span></div>
+          <p class="field-hint">Changing it signs out your other browsers. Your registered devices stay registered.</p>
+        </form>
+
+        <h2>Where you're signed in</h2>
+        <p class="hint">Each row is a signed-in browser. End any you don't recognise.</p>
+        <ul id="sessions-list" class="rows" aria-live="polite"><li class="loading">Loading…</li></ul>
+        <div class="actions">
+          <button id="revoke" class="btn danger" type="button">Sign out everywhere</button>
+          <button id="revoke-yes" class="btn danger solid" type="button" hidden>Yes, sign out everywhere</button>
+          <button id="revoke-no" class="btn" type="button" hidden>Cancel</button>
+        </div>
+        <p id="sessions-status" class="status" role="status"></p>
+
+      {% elif section == 'devices' %}
+        <p class="lede">A device is a browser you've authorized for your account. Its secret lives on that browser; remove a device and it stops working immediately.</p>
+        <div id="review-banner" class="banner" hidden role="status"></div>
+        <ul id="devices-list" class="rows devices" aria-live="polite"><li class="loading">Loading…</li></ul>
+        <p id="devices-status" class="status" role="status"></p>
+
+      {% elif section == 'privacy' %}
+        <p class="lede">What Compass AI keeps, who can reach it, and how to take it with you or erase it.</p>
+        <div class="panel prose">
+          <h2>What is stored</h2>
+          <ul>
+            <li>Your account: username, display name, optional email, and a salted <em>hash</em> of your password (never the password).</li>
+            <li>Your conversations and settings, in a folder only your account can reach.</li>
+            <li>Your devices: a name, type, dates, and a hashed secret. Not hardware identifiers.</li>
+            <li>Your signed-in sessions: browser and OS summary, and when they were last active.</li>
+          </ul>
+          {% if server_mode %}
+          <h2>Where it lives</h2>
+          <p>On this server, not on a cloud service run by Compass. Messages are sent only to the Ollama models this server runs, never to a third-party AI service. Chats are not used to train anything.</p>
+          <h2>Who can see it</h2>
+          <p>Other members can't see your chats. Whoever runs this server administers the machine and could in principle read its files, so don't share anything with it that you wouldn't share with them.</p>
+          <h2>Fair use</h2>
+          <p>This server is free to use, with limits on messages per day so everyone gets a turn. Your remaining messages are shown at the bottom of the chat sidebar.</p>
+          {% else %}
+          <h2>Where it lives</h2>
+          <p>On the main PC that hosts Compass AI, not on any cloud service run by Compass. Messages are sent only to the Ollama server that PC is configured to use.</p>
+          <h2>What your devices can reach</h2>
+          <p>A device can open your chats and settings once you've signed in on it. It cannot see other people's accounts, and it cannot start programs on the main PC: that works only on the main PC itself.</p>
+          <p>The owner of the host controls the computer and could in principle read its files, as with any shared computer.</p>
+          {% endif %}
+        </div>
+
+        <h2>Your data</h2>
+        <div class="panel">
+          <p class="hint">Download a copy of your profile, settings, conversations and device list.</p>
+          <a class="btn" id="export-link" href="{{ url_for('account.export_data') }}" download>Download my data (JSON)</a>
+        </div>
+
+        <h2>Delete account</h2>
+        <form id="delete-form" class="panel danger-zone" novalidate>
+          <p class="hint">Permanently erases your account, devices, sessions, conversations, settings and workspace folder on this host. This can't be undone.</p>
+          {{ field("confirm_username", "Type your username to confirm", auto="off", extra='autocapitalize="none" spellcheck="false"') }}
+          {{ field("delete_password", "Your password", type="password", auto="current-password") }}
+          <div class="actions"><button class="btn danger" type="submit">Delete my account</button><span id="delete-status" class="status" role="status"></span></div>
+        </form>
+
+      {% elif section == 'people' %}
+        <p class="lede">You own this {{ 'server' if server_mode else 'host' }}. Decide who can create an account{% if server_mode %} and how much each person can use{% endif %}.</p>
+        {% if server_mode %}
+        <h2>Free-tier limits</h2>
+        <form id="limits-form" class="panel" novalidate>
+          <p class="hint" id="limits-summary" aria-live="polite">Loading…</p>
+          {{ field("daily_messages", "Messages per person per day", type="number", value="0", hint="0 means no limit. The count resets at midnight UTC.", extra='min="0" inputmode="numeric"') }}
+          {{ field("per_minute", "Messages per person per minute", type="number", value="0", hint="Stops floods. 0 means no limit.", extra='min="0" inputmode="numeric"') }}
+          {{ field("max_chats", "Saved chats per person", type="number", value="0", hint="0 means no limit.", extra='min="0" inputmode="numeric"') }}
+          {{ field("max_users", "Accounts on this server", type="number", value="0", hint="New sign-ups are refused beyond this. 0 means no limit.", extra='min="0" inputmode="numeric"') }}
+          <div class="actions"><button class="btn primary" type="submit">Save limits</button><span id="limits-status" class="status" role="status"></span></div>
+          <p class="field-hint">You are never limited yourself. Replies are generated a few at a time, so when the server is busy people wait briefly and are never charged for a message that got no answer.</p>
+        </form>
+        {% endif %}
+        <h2>Who can sign up</h2>
+        <div class="panel">
+          <div class="segmented stack" role="radiogroup" aria-label="Registration" id="reg-group">
+            <label><input type="radio" name="reg" value="invite"><span><strong>Invite only</strong> — people need a code from you</span></label>
+            <label><input type="radio" name="reg" value="open"><span><strong>Open</strong> — anyone with the address can sign up</span></label>
+            <label><input type="radio" name="reg" value="closed"><span><strong>Closed</strong> — nobody new can sign up</span></label>
+          </div>
+          <p id="reg-status" class="status" role="status"></p>
+        </div>
+
+        <h2>Invite codes</h2>
+        <div class="panel">
+          <p class="hint">A code works once and expires after 7 days. It is shown only when you create it.</p>
+          <button id="make-invite" class="btn primary" type="button">Create invite code</button>
+          <div id="new-invite" class="invite-box" hidden></div>
+          <ul id="invites-list" class="rows" aria-live="polite"></ul>
+        </div>
+
+        <h2>Accounts on this {{ 'server' if server_mode else 'host' }}</h2>
+        <ul id="members-list" class="rows" aria-live="polite"><li class="loading">Loading…</li></ul>
+        <p id="people-status" class="status" role="status"></p>
+      {% endif %}
+    </main>
+  </div>
+</div>
+{% endblock %}

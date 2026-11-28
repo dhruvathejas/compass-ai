@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% from "_macros.html" import lockup with context %}
+{% block title %}Install · Compass AI{% endblock %}
+{% block bodyclass %}page{% endblock %}
+{% block head %}
+  <link rel="stylesheet" href="{{ asset('css/pages.css') }}">
+  <script type="module" src="{{ asset('js/install.js') }}"></script>
+{% endblock %}
+{% macro cmd(text) -%}
+  <div class="cmd-row"><pre class="cmd">{{ text }}</pre><button class="btn copy" type="button" data-copy="{{ text }}">Copy</button></div>
+{%- endmacro %}
+{% block body %}
+<div class="shell">
+  <header class="shell-head">
+    <div class="brand-slot">{{ lockup() }}</div>
+    <nav class="head-links" aria-label="Pages"><a href="{{ url_for('onboarding.welcome') }}">← Welcome</a></nav>
+  </header>
+
+  <main class="doc">
+    <h1>Install Compass AI</h1>
+    <p class="lede">Compass AI runs from its source folder with Python. There is no packaged installer or download yet, so these are the real steps. They take about five minutes.</p>
+
+    <div class="os-pick">
+      <span id="os-label" class="label">Your computer</span>
+      <input type="radio" name="os" id="os-windows" value="windows" checked><label for="os-windows">Windows</label>
+      <input type="radio" name="os" id="os-mac" value="mac"><label for="os-mac">macOS</label>
+      <input type="radio" name="os" id="os-linux" value="linux"><label for="os-linux">Linux</label>
+      <p class="os-note" id="os-note" hidden></p>
+
+      <ol class="steps">
+        <li>
+          <h2>Check what you need</h2>
+          <ul class="plain">
+            <li><strong>Python 3.10 or newer.</strong> Check with:
+              <span class="os windows">{{ cmd("py --version") }}</span>
+              <span class="os mac linux">{{ cmd("python3 --version") }}</span>
+              <span class="os windows">Missing? Get it from <a href="https://www.python.org/downloads/" rel="noopener noreferrer" target="_blank">python.org</a> and tick “Add Python to PATH”.</span>
+              <span class="os mac linux">Missing? Get it from <a href="https://www.python.org/downloads/" rel="noopener noreferrer" target="_blank">python.org</a> or your package manager.</span>
+            </li>
+            <li><strong>Ollama</strong>, installed separately from <a href="https://ollama.com/download" rel="noopener noreferrer" target="_blank">ollama.com</a>, with at least one model pulled (for example <code>ollama pull llama3.2</code>). Compass AI only talks to it; it never installs, starts or replaces Ollama or your models.</li>
+            <li><strong>Git</strong>, to download the code (or use a folder or zip you were given).</li>
+            <li><em>Optional:</em> <strong>VS Code</strong> with its <code>code</code> command, for the Code button.</li>
+          </ul>
+        </li>
+
+        <li>
+          <h2>Get Compass AI</h2>
+          {{ cmd("git clone " ~ repo_url) }}
+          {{ cmd("cd compass-ai") }}
+          <p class="note">Got a folder or zip instead? Unpack it and open a terminal inside it.</p>
+        </li>
+
+        <li>
+          <h2>Install its one dependency</h2>
+          <span class="os windows">{{ cmd("py -m pip install -r requirements.txt") }}</span>
+          <span class="os mac linux">{{ cmd("python3 -m pip install -r requirements.txt") }}</span>
+        </li>
+
+        <li>
+          <h2>Start it</h2>
+          <span class="os windows">{{ cmd("py app.py") }}</span>
+          <span class="os mac linux">{{ cmd("python3 app.py") }}</span>
+          <p class="note">Leave that window open while you use Compass AI. It listens only on this computer until you choose otherwise.</p>
+        </li>
+
+        <li>
+          <h2>Create your account</h2>
+          <p>On that same computer, open <a href="http://localhost:5000" rel="noopener noreferrer">http://localhost:5000</a>. The first account you create becomes the owner of that Compass AI. Then authorize the device when asked.</p>
+        </li>
+      </ol>
+    </div>
+
+    <div class="callout">
+      <h2>Already have a Compass AI somewhere?</h2>
+      <p>You don't need to install anything on this device. Connect it to the main PC instead.</p>
+      <div class="actions">
+        <a class="btn primary" href="{{ url_for('onboarding.connect') }}">Connect to my main PC</a>
+        {% if can_register %}<a class="btn" href="{{ url_for('auth.register_page') }}">{{ 'Create the owner account here' if first_run else 'Create an account on this host' }}</a>{% endif %}
+        <a class="btn" href="{{ url_for('auth.login_page') }}">Sign in</a>
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}

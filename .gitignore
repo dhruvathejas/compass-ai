@@ -1,0 +1,20 @@
+# Compass AI: private data. Never commit these (password hashes, session secrets, chats, user projects).
+memory/
+workspace/
+*.broken-*
+*.bak-v*
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# nanoGPT training artifacts
+data/**/*.bin
+data/**/*.pkl
+out*/
+*.pt
+wandb/
+.DS_Store

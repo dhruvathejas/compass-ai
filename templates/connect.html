@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% from "_macros.html" import lockup with context %}
+{% block title %}Connect to your main PC · Compass AI{% endblock %}
+{% block bodyclass %}page{% endblock %}
+{% block head %}
+  <link rel="stylesheet" href="{{ asset('css/pages.css') }}">
+  <script type="module" src="{{ asset('js/connect.js') }}"></script>
+{% endblock %}
+{% block body %}
+<div class="shell">
+  <header class="shell-head">
+    <div class="brand-slot">{{ lockup() }}</div>
+    <nav class="head-links" aria-label="Pages"><a href="{{ url_for('onboarding.welcome') }}">← Welcome</a></nav>
+  </header>
+
+  <main class="doc narrow">
+    <h1>Connect to your main PC</h1>
+    <p class="lede">Your main PC runs Compass AI and keeps your accounts, chats and projects. This device just opens it. Enter the address of the main PC, and Compass will check it before you sign in.</p>
+
+    <section id="saved" class="panel" hidden aria-label="Last host">
+      <p>Last host you used: <strong id="saved-addr"></strong> <span id="saved-state" class="pill" role="status"></span></p>
+      <div class="actions">
+        <button id="saved-go" class="btn primary" type="button">Reconnect</button>
+        <button id="saved-forget" class="btn" type="button">Forget it</button>
+      </div>
+    </section>
+
+    <form id="connect-form" novalidate>
+      <label for="address">Main PC address</label>
+      <div class="addr-row">
+        <input id="address" name="address" type="text" inputmode="url" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="192.168.1.20:5000" aria-describedby="address-hint" required>
+        <button class="btn primary" type="submit" id="connect-btn">Connect</button>
+      </div>
+      <p class="field-hint" id="address-hint">The address on the main PC's screen when it starts, for example <code>192.168.1.20:5000</code>, or a tunnel link like <code>https://your-name.trycloudflare.com</code>.</p>
+    </form>
+
+    <div id="result" class="result" role="status" aria-live="polite" hidden></div>
+
+    <details class="help" open>
+      <summary>Where do I find the address?</summary>
+      <ol>
+        <li><strong>At home, same Wi-Fi:</strong> on the main PC stop Compass AI and start it with <code>python app.py --lan</code>. It prints “Other devices on your network:” followed by an address such as <code>http://192.168.1.20:5000</code>. Enter that here. (Plain http on a trusted network only.)</li>
+        <li><strong>Away from home:</strong> start a tunnel on the main PC, for example <code>cloudflared tunnel --url localhost:5000</code>, and enter the <code>https://…</code> link it prints.</li>
+        <li><strong><code>localhost</code> or <code>127.0.0.1</code> never works here.</strong> On a phone or another computer those words mean <em>this</em> device, not the main PC.</li>
+      </ol>
+    </details>
+
+    <details class="help">
+      <summary>It says it can't reach the main PC</summary>
+      <ul>
+        <li>Is Compass AI running on the main PC (<code>python app.py</code>), and is the main PC awake?</li>
+        <li>Is this device on the same network, or are you using the tunnel link?</li>
+        <li>For a network address, the host must be started with <code>--lan</code>, and Windows Firewall may ask you to allow Python on private networks.</li>
+        <li>This page is on <code>https</code> but the address is plain <code>http</code>? Browsers block that. Open this page over <code>http</code> too, or use the tunnel's <code>https</code> link.</li>
+        <li>Tunnel links change each time <code>cloudflared</code> restarts. Copy the new one.</li>
+      </ul>
+    </details>
+  </main>
+</div>
+{% endblock %}

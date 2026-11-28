@@ -1,0 +1,22 @@
+{# Brand lockup: the ink version on light themes, the reversed one on dark (CSS picks which is shown). #}
+{% macro lockup() -%}
+  <img class="lk lk-light" src="{{ asset('brand/compass-ai/logo/lockup.svg') }}" alt="Compass AI">
+  <img class="lk lk-dark" src="{{ asset('brand/compass-ai/logo/lockup-reversed.svg') }}" alt="" aria-hidden="true">
+{%- endmacro %}
+
+{# The compass mark on its own, theme-aware. #}
+{% macro mark() -%}
+  <img class="lk lk-light" src="{{ asset('brand/compass-ai/logo/mark.svg') }}" alt="">
+  <img class="lk lk-dark" src="{{ asset('brand/compass-ai/logo/mark-reversed.svg') }}" alt="" aria-hidden="true">
+{%- endmacro %}
+
+{# One labelled text field. `error_field` names the field the server complained about. #}
+{% macro field(id, label, type="text", value="", auto="off", hint="", required=True, error_field=None, extra="") -%}
+  <div class="field{% if error_field == id %} has-error{% endif %}">
+    <label for="{{ id }}">{{ label }}{% if not required %} <span class="opt">(optional)</span>{% endif %}</label>
+    <input id="{{ id }}" name="{{ id }}" type="{{ type }}" value="{{ value }}" autocomplete="{{ auto }}"
+           {% if required %}required{% endif %} {% if error_field == id %}aria-invalid="true"{% endif %}
+           {% if hint %}aria-describedby="{{ id }}-hint"{% endif %} {{ extra|safe }}>
+    {% if hint %}<p class="field-hint" id="{{ id }}-hint">{{ hint }}</p>{% endif %}
+  </div>
+{%- endmacro %}

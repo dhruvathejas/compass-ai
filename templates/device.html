@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% from "_macros.html" import lockup, field with context %}
+{% block title %}Authorize this device · Compass AI{% endblock %}
+{% block bodyclass %}centered{% endblock %}
+{% block body %}
+<main class="card wide">
+  <div class="card-brand">{{ lockup() }}</div>
+  <h1>Authorize this device</h1>
+  <p class="lede">
+    {% if first %}Hi {{ user.display_name }}. This is the first device on your account. Name it so you can recognise it later.
+    {% else %}Hi {{ user.display_name }}. Compass AI doesn't recognise this browser yet. If it's yours, authorize it; if it isn't, sign out.{% endif %}
+  </p>
+  <form method="post" action="{{ url_for('auth.device_authorize') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf }}">
+    {{ field("name", "Device name", value=values.name, hint="For example “Studio PC” or “Dhruva's phone”.", extra='autofocus maxlength="40"') }}
+    <fieldset class="type-pick">
+      <legend>What kind of device is it?</legend>
+      <div class="segmented wrap" role="radiogroup">
+        {% for t in types %}
+          <label><input type="radio" name="type" value="{{ t }}" {% if values.type == t %}checked{% endif %}><span>{{ t|capitalize }}</span></label>
+        {% endfor %}
+      </div>
+    </fieldset>
+    <ul class="facts">
+      <li>Connecting from: <strong>{{ origin }}</strong></li>
+      <li>Authorizing stores a secret on this browser. Without your password it opens nothing, and you can remove the device from <em>Account → Devices</em> at any time.</li>
+    </ul>
+    {% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
+    <button class="btn primary" type="submit">Authorize this device</button>
+  </form>
+  <form method="post" action="{{ url_for('auth.logout') }}" class="card-links">
+    <input type="hidden" name="csrf_token" value="{{ csrf }}">
+    <button class="link-btn" type="submit">Not me: sign out</button>
+  </form>
+</main>
+{% endblock %}

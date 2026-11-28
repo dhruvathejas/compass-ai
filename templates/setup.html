@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% from "_macros.html" import lockup with context %}
+{% block title %}Setup needed · Compass AI{% endblock %}
+{% block bodyclass %}centered{% endblock %}
+{% block body %}
+<main class="card">
+  <div class="card-brand">{{ lockup() }}</div>
+  <h1>Setup needed</h1>
+  {% if server_mode %}
+  <p class="lede">This server has no accounts yet, so it is locked. Its administrator creates the owner account from the server's own command line, never from a web page that anyone could reach first.</p>
+  <p class="lede">If that's you, run <strong>python app.py set-password</strong> on the server, then reload this page.</p>
+  {% else %}
+  <p class="lede">This Compass AI host has no accounts yet, so it is locked. The owner account can only be created on the computer that runs it.</p>
+  <p class="lede">On that computer, open <strong>http://localhost:5000</strong> in a browser and create the owner account. Then reload this page.</p>
+  <p class="card-links"><a href="{{ url_for('onboarding.welcome') }}">Welcome page</a></p>
+  {% endif %}
+</main>
+{% endblock %}

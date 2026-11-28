@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% from "_macros.html" import lockup, field with context %}
+{% block title %}{{ 'Create the owner account' if first else 'Create an account' }} · Compass AI{% endblock %}
+{% block bodyclass %}centered{% endblock %}
+{% block body %}
+<main class="card wide">
+  <div class="card-brand">{{ lockup() }}</div>
+  {% if first %}
+    <h1>Create the owner account</h1>
+    <p class="lede">This is the first account on this Compass AI host, so you become its owner. You can invite other people later, and nobody can create the first account from another device.</p>
+  {% elif mode == 'closed' %}
+    <h1>Registration is closed</h1>
+    <p class="lede">The owner of this host isn't accepting new accounts right now. Ask them to invite you, then come back with your invite code.</p>
+    <p class="card-links"><a href="{{ url_for('auth.login_page') }}">Back to sign in</a></p>
+  {% else %}
+    <h1>Create your account</h1>
+    <p class="lede">{% if server_mode %}Free to use. Your chats are private to your account, within fair-use limits on messages per day.{% else %}Your chats, settings and projects stay private to this account.{% endif %}</p>
+  {% endif %}
+
+  {% if first or mode != 'closed' %}
+  <form method="post" action="{{ url_for('auth.register_post') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf }}">
+    {{ field("display_name", "Your name", auto="name", value=values.get('display_name', ''), hint="Shown inside the app. You can change it later.", required=False, error_field=error_field) }}
+    {{ field("username", "Username", auto="username", value=values.get('username', ''), hint="3-32 characters: lowercase letters, digits, dot, dash, underscore.", error_field=error_field, extra='autofocus autocapitalize="none" spellcheck="false"') }}
+    {{ field("email", "Email", type="email", auto="email", value=values.get('email', ''), hint="Stored on the server as contact info only. It is not verified and no email is ever sent. If you forget your password, the server's owner has to reset it.", required=False, error_field=error_field) }}
+    {{ field("password", "Password", type="password", auto="new-password", hint="At least 10 characters. A few random words works well.", error_field=error_field) }}
+    {{ field("confirm", "Repeat password", type="password", auto="new-password", error_field=error_field) }}
+    {% if not first and mode == 'invite' %}
+      {{ field("invite", "Invite code", value=invite, hint="Ask the owner of this host for one. It works once.", error_field=error_field, extra='autocapitalize="characters" spellcheck="false"') }}
+    {% endif %}
+    {% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
+    <button class="btn primary" type="submit">{{ 'Create owner account' if first else 'Create account' }}</button>
+  </form>
+  <ul class="card-links">
+    {% if not first %}<li>Already have an account? <a href="{{ url_for('auth.login_page') }}">Sign in</a></li>{% endif %}
+    {% if not server_mode %}<li><a href="{{ url_for('onboarding.welcome') }}">Welcome page</a></li>{% endif %}
+  </ul>
+  {% endif %}
+</main>
+{% endblock %}

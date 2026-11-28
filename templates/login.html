@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% from "_macros.html" import lockup, field with context %}
+{% block title %}Sign in · Compass AI{% endblock %}
+{% block bodyclass %}centered{% endblock %}
+{% block body %}
+<main class="card">
+  <div class="card-brand">{{ lockup() }}</div>
+  <h1>Sign in</h1>
+  <p class="lede">{% if server_mode %}Free to use. Sign in to pick up your chats.{% else %}Your chats and projects are private to your account.{% endif %}</p>
+  <form method="post" action="{{ url_for('auth.login_post') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf }}">
+    {{ field("username", "Username", auto="username", value=username, extra='autofocus autocapitalize="none" spellcheck="false"') }}
+    {{ field("password", "Password", type="password", auto="current-password") }}
+    {% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
+    <button class="btn primary" type="submit">Sign in</button>
+  </form>
+  <ul class="card-links">
+    {% if can_register %}<li>New here? <a href="{{ url_for('auth.register_page') }}">Create an account</a></li>{% endif %}
+    {% if not server_mode %}
+    <li>Using another computer's Compass AI? <a href="{{ url_for('onboarding.connect') }}">Connect to a main PC</a></li>
+    <li><a href="{{ url_for('onboarding.welcome') }}">Welcome page</a></li>
+    {% endif %}
+  </ul>
+</main>
+{% endblock %}

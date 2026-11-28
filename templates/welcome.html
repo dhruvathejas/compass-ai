@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% from "_macros.html" import lockup, mark with context %}
+{% block title %}Welcome · Compass AI{% endblock %}
+{% block bodyclass %}page{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ asset('css/pages.css') }}">{% endblock %}
+{% block body %}
+<div class="shell">
+  <header class="shell-head">
+    <div class="brand-slot">{{ lockup() }}</div>
+    <nav class="head-links" aria-label="Account">
+      <a href="{{ url_for('auth.login_page') }}">Sign in</a>
+    </nav>
+  </header>
+
+  <main class="welcome">
+    <section class="hero" aria-labelledby="welcome-title">
+      <div class="hero-mark">{{ mark() }}</div>
+      <h1 id="welcome-title">Welcome to Compass AI</h1>
+      <p class="tagline">Your goal. Your route. Your decision.</p>
+      <p class="sub">An assistant that helps you navigate and never takes the wheel. Pick the option that fits where you are.</p>
+    </section>
+
+    <nav class="paths" aria-label="How would you like to start?">
+      <a class="path" href="{{ url_for('onboarding.install') }}">
+        <svg class="path-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 7v23m0 0l-9-9m9 9l9-9M9 34v5h30v-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h2>Install Compass AI</h2>
+        <p>I'm new here. Help me get Compass AI installed and running.</p>
+        <span class="go">Start setup <span aria-hidden="true">→</span></span>
+      </a>
+
+      <a class="path" href="{{ url_for('auth.login_page') }}">
+        <svg class="path-icon" viewBox="0 0 48 48" aria-hidden="true"><circle cx="17" cy="24" r="8" fill="none" stroke="currentColor" stroke-width="3"/><path d="M25 24h18m-6 0v7m-6-7v5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h2>I already have it installed</h2>
+        <p>Compass AI is already installed on this device. Let me sign in or connect it to my account.</p>
+        <span class="go">{{ 'Create the owner account' if first_run else 'Sign in' }} <span aria-hidden="true">→</span></span>
+      </a>
+
+      <a class="path" href="{{ url_for('onboarding.connect') }}">
+        <svg class="path-icon" viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="9" width="26" height="19" rx="3" fill="none" stroke="currentColor" stroke-width="3"/><path d="M12 36h12M18 28v8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><rect x="34" y="17" width="9" height="19" rx="2.5" fill="none" stroke="currentColor" stroke-width="3"/></svg>
+        <h2>I have it running on my main PC</h2>
+        <p>My main PC already runs Compass AI. I want to connect this device to it.</p>
+        <span class="go">Connect this device <span aria-hidden="true">→</span></span>
+      </a>
+    </nav>
+
+    <p class="fine">Compass AI runs on your own computer with your own <a href="https://ollama.com" rel="noopener noreferrer" target="_blank">Ollama</a> models. Your chats stay on the main PC, and you can see and remove every device that connects.</p>
+  </main>
+</div>
+{% endblock %}
